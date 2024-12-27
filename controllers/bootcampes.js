@@ -10,11 +10,7 @@ exports.getBootcamps = async (req, res, next) => {
       .status(200)
       .json({ success: true, count: bootcamps.length, data: bootcamps });
   } catch (error) {
-    console.log(error.message);
-    res.status(400).json({
-      success: false,
-      error: error.message,
-    });
+    next(error);
   }
 };
 
@@ -49,7 +45,7 @@ exports.createBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    next(error);
   }
 };
 
@@ -65,7 +61,7 @@ exports.updateBootcamp = async (req, res, next) => {
 
     res.status(200).json({ success: true, data: bootcamp });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    next(error);
   }
 };
 
@@ -74,12 +70,18 @@ exports.updateBootcamp = async (req, res, next) => {
 // Access: Private
 exports.deleteBootcamp = async (req, res, next) => {
   try {
+    const bootcamp = await BootCamp.findById(req.params.id);
+    if (!bootcamp) {
+      return res
+        .status(500)
+        .json({ success: false, message: "No document found in that Id" });
+    }
     await BootCamp.findByIdAndDelete(req.params.id);
     res.status(200).json({
       success: true,
       message: "Bootcamp has been deleted successfully",
     });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    next(error);
   }
 };
