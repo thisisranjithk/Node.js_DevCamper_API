@@ -6,8 +6,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectId
   if (err.name === "CastError") {
-    const message = `Bootcamp not found for ${err.value}`;
-    error = new ErrorResponse(message, 404);
+    const message = `Invalid Bootcamp Id(${err.value})`;
+    error = new ErrorResponse(message, 400);
   }
 
   // Mongoose duplicate key
