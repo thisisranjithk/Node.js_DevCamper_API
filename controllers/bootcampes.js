@@ -1,6 +1,7 @@
 const BootCamp = require("../models/BootCamp");
 const asyncHander = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/errorResponse");
+
 // Description: Get all Bootcamps
 // Route: GET /api/v1/bootcamps
 // Access: Public
@@ -10,7 +11,7 @@ exports.getBootcamps = asyncHander(async (req, res, next) => {
   // Copy of req.query
   const reqQuery = { ...req.query };
 
-  const removeFields = ["select"];
+  const removeFields = ["select", "sort", "limit", "page"];
 
   removeFields.map((param) => delete reqQuery[param]);
 
@@ -36,10 +37,41 @@ exports.getBootcamps = asyncHander(async (req, res, next) => {
     query = query.sort("-updatedAt");
   }
 
+  //Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 50;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await BootCamp.countDocuments();
+
+  query = query.skip(startIndex).limit(limit);
+
   const bootcamps = await query;
-  res
-    .status(200)
-    .json({ success: true, count: bootcamps.length, data: bootcamps });
+
+  // Pagination Result
+  const pagination = {};
+
+  pagination.currentPage = page;
+  if (endIndex < total) {
+    pagination.next = {
+      next: page + 1,
+      limit,
+    };
+  }
+
+  if (startIndex > 0) {
+    pagination.prev = {
+      prev: page - 1,
+      limit,
+    };
+  }
+
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    pagination,
+    data: bootcamps,
+  });
 });
 
 // Description: Get single Bootcamp
