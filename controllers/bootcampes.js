@@ -39,7 +39,7 @@ exports.getBootcamps = asyncHander(async (req, res, next) => {
 
   //Pagination
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 50;
+  const limit = parseInt(req.query.limit) || 25;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   const total = await BootCamp.countDocuments();
@@ -51,20 +51,17 @@ exports.getBootcamps = asyncHander(async (req, res, next) => {
   // Pagination Result
   const pagination = {};
 
-  pagination.currentPage = page;
-  if (endIndex < total) {
-    pagination.next = {
-      next: page + 1,
-      limit,
-    };
+  if (startIndex > 0) {
+    pagination.previousPage = page - 1;
   }
 
-  if (startIndex > 0) {
-    pagination.prev = {
-      prev: page - 1,
-      limit,
-    };
+  pagination.currentPage = page;
+
+  if (endIndex < total) {
+    pagination.nextPage = page + 1;
   }
+
+  pagination.limit = limit;
 
   res.status(200).json({
     success: true,
