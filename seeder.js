@@ -37,10 +37,6 @@ const deleteData = async () => {
   }
 };
 
-console.log("argv 1 ", process.argv[0]);
-console.log("argv 2 ", process.argv[1]);
-console.log("argv 3 ", process.argv[2]);
-
 if (process.argv[2] === "-i") {
   importData();
 } else if (process.argv[2] === "-d") {
