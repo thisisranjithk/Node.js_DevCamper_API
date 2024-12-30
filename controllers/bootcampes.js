@@ -7,13 +7,35 @@ const ErrorResponse = require("../utils/errorResponse");
 exports.getBootcamps = asyncHander(async (req, res, next) => {
   let query;
 
-  let queryStr = JSON.stringify(req.query);
+  // Copy of req.query
+  const reqQuery = { ...req.query };
+
+  const removeFields = ["select"];
+
+  removeFields.map((param) => delete reqQuery[param]);
+
+  let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
 
   query = BootCamp.find(JSON.parse(queryStr));
+
+  // Query to Select fields
+  if (req.query.select) {
+    let fields = req.query.select.replace(",", " ");
+    query = query.select(fields);
+  }
+
+  // Sort
+  if (req.query.sort) {
+    let sortBy = req.query.sort.replace(",", " ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-updatedAt");
+  }
+
   const bootcamps = await query;
   res
     .status(200)
