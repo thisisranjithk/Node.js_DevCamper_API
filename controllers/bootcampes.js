@@ -134,3 +134,21 @@ exports.deleteBootcamp = asyncHander(async (req, res, next) => {
     message: "Bootcamp has been deleted successfully",
   });
 });
+
+// Description: Upload image for Bootcamp
+// Route: PUT /api/v1/bootcamps/:id/image
+// Access: Private
+exports.bootcampImageUpload = asyncHander(async (req, res, next) => {
+  const bootcamp = await BootCamp.findById(req.params.id);
+  if (!bootcamp) {
+    return res
+      .status(404)
+      .json({ success: false, message: "No document found in that Id" });
+  }
+
+  if (!req.files) {
+    return next(new ErrorResponse("Please upload the file", 404));
+  }
+
+  console.log(req.files.file);
+});

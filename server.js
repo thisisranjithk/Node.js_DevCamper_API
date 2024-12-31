@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const colors = require("colors");
+const fileUpload = require("express-fileupload");
 const connectDB = require("./config/db");
 // const logger = require("./middleware/logger"); // custom middleware
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
@@ -9,12 +10,14 @@ const errorHandler = require("./middleware/errorHander"); // error handler middl
 dotenv.config({ path: "./config/config.env" });
 
 connectDB();
+const app = express();
+
+//express fileupload
+app.use(fileUpload());
 
 // Route files
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
-
-const app = express();
 
 // Body parser
 app.use(express.json());
