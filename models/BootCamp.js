@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const ErrorResponse = require("../utils/errorResponse");
 
 const BootCampSchema = new mongoose.Schema(
   {
@@ -102,6 +103,30 @@ const BootCampSchema = new mongoose.Schema(
   }
 );
 
+// delete related courses when a bootcamp is deleted
+BootCampSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    if (!this._id) {
+      console.error("Document _id is missing in the middleware context.");
+      return next(
+        new ErrorResponse(
+          "Cannot perform cleanup for missing document ID.",
+          400
+        )
+      );
+    }
+
+    console.log(`Removing courses related to bootcamp id ${this._id}`);
+
+    // Use `this.model` to access the Course model
+    await this.model("Course").deleteMany({ bootcamp: this._id });
+
+    next();
+  }
+);
+
 // create bootcamp slug from name
 BootCampSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
@@ -115,4 +140,5 @@ BootCampSchema.virtual("courses", {
   foreignField: "bootcamp",
   justOne: false,
 });
+
 module.exports = mongoose.model("BootCamp", BootCampSchema);

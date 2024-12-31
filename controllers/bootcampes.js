@@ -125,7 +125,7 @@ exports.deleteBootcamp = asyncHander(async (req, res, next) => {
       .status(500)
       .json({ success: false, message: "No document found in that Id" });
   }
-  await BootCamp.findByIdAndDelete(req.params.id);
+  await bootcamp.deleteOne();
   res.status(200).json({
     success: true,
     message: "Bootcamp has been deleted successfully",
