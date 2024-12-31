@@ -31,12 +31,54 @@ const CourseSchema = new mongoose.Schema(
     },
     bootcamp: {
       type: mongoose.Schema.ObjectId,
-      ref: "Bootcamp",
+      ref: "BootCamp",
       required: [true, "Bootcamp Id is required"],
     },
   },
   {
     timestamps: true,
+  }
+);
+
+//static method to calculate average cost of tuitions
+CourseSchema.statics.getAverageCost = async function (bootcampId) {
+  const arr = await this.aggregate([
+    {
+      $match: { bootcamp: bootcampId },
+    },
+    {
+      $group: {
+        _id: "$bootcamp",
+        averageCost: { $avg: "$tuition" },
+      },
+    },
+  ]);
+
+  console.log(
+    `Calculating average cost... ${Math.ceil(arr[0]?.averageCost) || 0}`
+  );
+
+  try {
+    await this.model("BootCamp").findByIdAndUpdate(bootcampId, {
+      averageCost: Math.ceil(arr[0]?.averageCost) || 0,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// call getAverageCost after save
+CourseSchema.post("save", function (next) {
+  this.constructor.getAverageCost(this.bootcamp);
+});
+
+// call getAverageCost before remove
+CourseSchema.post(
+  "deleteOne",
+  { document: true, query: false },
+  function (next) {
+    const bootcampId = this.bootcamp;
+    this.model("Course").getAverageCost(bootcampId);
   }
 );
 
