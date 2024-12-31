@@ -78,7 +78,10 @@ exports.getBootcamps = asyncHander(async (req, res, next) => {
 // Route: GET /api/v1/bootcamps/:id
 // Access: Public
 exports.getBootcamp = asyncHander(async (req, res, next) => {
-  const bootcamp = await BootCamp.findById(req.params.id);
+  const bootcamp = await BootCamp.findById(req.params.id).populate({
+    path: "courses",
+    select: "title description",
+  });
 
   if (!bootcamp) {
     return next(
@@ -122,7 +125,7 @@ exports.deleteBootcamp = asyncHander(async (req, res, next) => {
   const bootcamp = await BootCamp.findById(req.params.id);
   if (!bootcamp) {
     return res
-      .status(500)
+      .status(404)
       .json({ success: false, message: "No document found in that Id" });
   }
   await bootcamp.deleteOne();
