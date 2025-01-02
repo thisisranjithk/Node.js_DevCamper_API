@@ -22,8 +22,8 @@ const importData = async () => {
   try {
     await BootCamp.create(bootcamps);
     console.log("Bootcamp data imported successfully...".yellow.inverse);
-    // await Course.create(courses);
-    // console.log("Courses data imported successfully...".yellow.inverse);
+    await Course.create(courses);
+    console.log("Courses data imported successfully...".yellow.inverse);
     process.exit();
   } catch (error) {
     console.log(error.red);
