@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const connectDB = require("./config/db");
-// const logger = require("./middleware/logger"); // custom middleware
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
 
 // Load env vars
@@ -22,6 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Route files
 const bootcamps = require("./routes/bootcamps");
 const courses = require("./routes/courses");
+const auth = require("./routes/auth");
 
 // Body parser
 app.use(express.json());
@@ -31,6 +31,7 @@ app.use(express.json());
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
+app.use("/api/v1/auth", auth);
 
 //error handler middleware
 app.use(errorHandler);
