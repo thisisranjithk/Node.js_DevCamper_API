@@ -1,3 +1,4 @@
+const path = require("path");
 const BootCamp = require("../models/BootCamp");
 const asyncHander = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/errorResponse");
@@ -150,5 +151,45 @@ exports.bootcampImageUpload = asyncHander(async (req, res, next) => {
     return next(new ErrorResponse("Please upload the file", 404));
   }
 
-  console.log(req.files.file);
+  const file = req.files.file;
+
+  // Make sure the image type
+  if (!file?.mimetype.startsWith("image")) {
+    return next(
+      new ErrorResponse(
+        "Invalid file format, try to upload the file of Jpeg,png,webp,jpg",
+        400
+      )
+    );
+  }
+
+  // File Upload size limit
+  if (file?.size >= process.env.MEX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please upload a file below ${process.env.MEX_FILE_UPLOAD} Bytes`,
+        400
+      )
+    );
+  }
+
+  // Create a custom name
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      console.log(err);
+      return next(new ErrorResponse(`Error Uploading file, Try Again`, 500));
+    }
+
+    await BootCamp.findByIdAndUpdate(req.params.id, {
+      image: file.name,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Image Uploaded successfully",
+      data: file.name,
+    });
+  });
 });
