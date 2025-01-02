@@ -8,7 +8,17 @@ const BootCamp = require("../models/BootCamp");
 // Route: GET /api/v1/bootcamps/:bootcampId/courses
 // Access: Public
 exports.getCourses = asyncHander(async (req, res, next) => {
-  res.status(200).json(res.advancedResults);
+  if (req.params.bootcampId) {
+    const courses = await Course.find({ bootcamp: req.params.bootcampId });
+
+    return res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses,
+    });
+  } else {
+    res.status(200).json(res.advancedResults);
+  }
 });
 
 // Description: Get single Course
