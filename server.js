@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const dotenv = require("dotenv");
 const colors = require("colors");
 const fileUpload = require("express-fileupload");
@@ -14,6 +15,9 @@ const app = express();
 
 //express fileupload
 app.use(fileUpload());
+
+// Set static folders
+app.use(express.static(path.join(__dirname, "public")));
 
 // Route files
 const bootcamps = require("./routes/bootcamps");
