@@ -47,6 +47,30 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   SendCookieTokenResponse(user, 200, res, "User LoggedIn successfully");
 });
+// Description:  Forgot password
+// Route: POST /api/v1/auth/forgotpassword
+// Access: Public
+exports.forgotpassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(`User not found with email:${req.body.email}`, 404)
+    );
+  }
+
+  // Get Reset token
+  const resetToken = user.getResetPasswordToken();
+
+  console.log(resetToken);
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
 
 // Get token from model and create cookie and send as response
 const SendCookieTokenResponse = (user, statusCode, res, message) => {
