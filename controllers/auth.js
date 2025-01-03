@@ -67,3 +67,18 @@ const SendCookieTokenResponse = (user, statusCode, res, message) => {
     token,
   });
 };
+
+// Description:  Get User
+// Route: POST /api/v1/auth/user
+// Access: Private
+
+exports.getUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
