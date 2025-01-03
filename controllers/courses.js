@@ -54,6 +54,19 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       )
     );
   }
+
+  // Add user id to the req.body
+  req.body.user = req.user.id;
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ID ${req.user.id} is unauthorized to add the Course`,
+        403
+      )
+    );
+  }
+
   const course = await Course.create(req.body);
   res.status(200).json({
     success: true,
