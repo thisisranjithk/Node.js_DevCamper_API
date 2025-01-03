@@ -90,6 +90,15 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     );
   }
 
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ID ${req.user.id} is unauthorized to update the Course`,
+        403
+      )
+    );
+  }
+
   course = await Course.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -112,6 +121,15 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     return res
       .status(404)
       .json({ success: false, message: "No document found in that Id" });
+  }
+
+  if (course.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ID ${req.user.id} is unauthorized to Delete the Course`,
+        403
+      )
+    );
   }
 
   await course.deleteOne();
