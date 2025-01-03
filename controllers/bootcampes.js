@@ -62,7 +62,25 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // Route: PUT /api/v1/bootcamps/:id
 // Access: Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await BootCamp.findByIdAndUpdate(req.params.id, req.body, {
+  let bootcamp = await BootCamp.findById(req.params.id);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with user ID ${req.params.id}`, 404)
+    );
+  }
+
+  // Make sure user is Bootcamp owner
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ID ${req.params.id} is unauthorized to update the bootcamp`,
+        403
+      )
+    );
+  }
+
+  bootcamp = await BootCamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
