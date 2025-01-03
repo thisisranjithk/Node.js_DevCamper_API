@@ -1,11 +1,11 @@
 const ErrorResponse = require("../utils/errorResponse");
-const asyncHander = require("../middleware/asyncHandler");
+const asyncHandler = require("../middleware/asyncHandler");
 const User = require("../models/User");
 
 // Description:  Register User
 // Route: POST /api/v1/auth/register
 // Access: Public
-exports.register = asyncHander(async (req, res, next) => {
+exports.register = asyncHandler(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
   const user = await User.create({
@@ -21,7 +21,7 @@ exports.register = asyncHander(async (req, res, next) => {
 // Description:  Login User
 // Route: POST /api/v1/auth/login
 // Access: Public
-exports.login = asyncHander(async (req, res, next) => {
+exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email) {

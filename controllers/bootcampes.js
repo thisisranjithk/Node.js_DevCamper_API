@@ -1,19 +1,19 @@
 const path = require("path");
 const BootCamp = require("../models/BootCamp");
-const asyncHander = require("../middleware/asyncHandler");
+const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/errorResponse");
 
 // Description: Get all Bootcamps
 // Route: GET /api/v1/bootcamps
 // Access: Public
-exports.getBootcamps = asyncHander(async (req, res, next) => {
+exports.getBootcamps = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
 
 // Description: Get single Bootcamp
 // Route: GET /api/v1/bootcamps/:id
 // Access: Public
-exports.getBootcamp = asyncHander(async (req, res, next) => {
+exports.getBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await BootCamp.findById(req.params.id).populate({
     path: "courses",
     select: "title description",
@@ -34,7 +34,7 @@ exports.getBootcamp = asyncHander(async (req, res, next) => {
 // Description: Create a Bootcamp
 // Route: POST /api/v1/bootcamps/
 // Access: Private
-exports.createBootcamp = asyncHander(async (req, res, next) => {
+exports.createBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await BootCamp.create(req.body);
   res.status(201).json({
     success: true,
@@ -45,7 +45,7 @@ exports.createBootcamp = asyncHander(async (req, res, next) => {
 // Description: Update a Bootcamp
 // Route: PUT /api/v1/bootcamps/:id
 // Access: Private
-exports.updateBootcamp = asyncHander(async (req, res, next) => {
+exports.updateBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await BootCamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -57,7 +57,7 @@ exports.updateBootcamp = asyncHander(async (req, res, next) => {
 // Description: Delete a Bootcamp
 // Route: DELETE /api/v1/bootcamps/:id
 // Access: Private
-exports.deleteBootcamp = asyncHander(async (req, res, next) => {
+exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await BootCamp.findById(req.params.id);
   if (!bootcamp) {
     return res
@@ -74,7 +74,7 @@ exports.deleteBootcamp = asyncHander(async (req, res, next) => {
 // Description: Upload image for Bootcamp
 // Route: PUT /api/v1/bootcamps/:id/image
 // Access: Private
-exports.bootcampImageUpload = asyncHander(async (req, res, next) => {
+exports.bootcampImageUpload = asyncHandler(async (req, res, next) => {
   const bootcamp = await BootCamp.findById(req.params.id);
   if (!bootcamp) {
     return res
