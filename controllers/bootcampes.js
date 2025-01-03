@@ -98,6 +98,15 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
       .status(404)
       .json({ success: false, message: "No document found in that Id" });
   }
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        `User ID ${req.params.id} is unauthorized to Delete the bootcamp`,
+        403
+      )
+    );
+  }
   await bootcamp.deleteOne();
   res.status(200).json({
     success: true,
