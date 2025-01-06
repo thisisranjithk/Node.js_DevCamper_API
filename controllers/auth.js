@@ -156,6 +156,21 @@ exports.updatedetails = asyncHandler(async (req, res, next) => {
   });
 });
 
+// Description: Update password
+// Route: PUT /api/v1/auth/updatepassword
+// Access: Private
+exports.updatepassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(new ErrorResponse("Old password is incorrect ", 401));
+  }
+
+  user.password = req.body.newPassword;
+  await user.save();
+  SendCookieTokenResponse(user, 200, res, "Password updated successfully");
+});
+
 // Get token from model and create cookie and send as response
 const SendCookieTokenResponse = (user, statusCode, res, message) => {
   // Generate Token
