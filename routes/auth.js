@@ -6,12 +6,14 @@ const {
   register,
   login,
   resetpassword,
+  updatedetails,
 } = require("../controllers/auth");
 const { protect } = require("../middleware/auth");
 
 router.post("/register", register);
 router.post("/login", login);
 router.get("/user", protect, getUser);
+router.put("/updatedetails", protect, updatedetails);
 router.post("/forgotpassword", forgotpassword);
 router.put("/resetpassword/:resettoken", resetpassword);
 

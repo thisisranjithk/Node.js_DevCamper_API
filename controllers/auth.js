@@ -111,7 +111,6 @@ exports.forgotpassword = asyncHandler(async (req, res, next) => {
 // Route: PUT /api/v1/auth/resetpassword/:resettoken
 // Access: Publich
 exports.resetpassword = asyncHandler(async (req, res, next) => {
-  
   // Get hashed token
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -135,6 +134,26 @@ exports.resetpassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   SendCookieTokenResponse(user, 200, res, "Password Reset successfull");
+});
+
+// Description:  Update User details
+// Route: PUT /api/v1/auth/updatedetails
+// Access: Private
+exports.updatedetails = asyncHandler(async (req, res, next) => {
+  const fieldsToUpdate = {
+    username: req.body.name,
+    email: req.body.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
 });
 
 // Get token from model and create cookie and send as response
