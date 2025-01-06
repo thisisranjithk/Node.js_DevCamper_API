@@ -34,6 +34,14 @@ const ReviewSchema = new mongoose.Schema(
   }
 );
 
+// Reverse populate with virtuals
+ReviewSchema.virtual("bootcamps", {
+  ref: "BootCamp",
+  localField: "_id",
+  foreignField: "bootcamp",
+  justOne: false,
+});
+
 const Review = mongoose.model("Review", ReviewSchema);
 
 module.exports = Review;

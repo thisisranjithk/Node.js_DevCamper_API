@@ -8,8 +8,8 @@ const { protect, authorize } = require("../middleware/auth");
 
 router.route("/").get(
   advancedResults(Review, {
-    path: "bootcamp",
-    select: "name, description",
+    path: "bootcamps",
+    select: "name description",
   }),
   getReviews
 );
