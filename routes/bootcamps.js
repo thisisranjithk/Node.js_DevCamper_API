@@ -8,14 +8,17 @@ const {
   deleteBootcamp,
   bootcampImageUpload,
 } = require("../controllers/bootcampes");
-const BootCamp = require("../models/BootCamp");
 const advancedResults = require("../middleware/advancedResults");
+const { protect, authorize } = require("../middleware/auth");
+const BootCamp = require("../models/BootCamp");
+
 // Include other resouce Router
 const courseRouter = require("./courses");
-const { protect, authorize } = require("../middleware/auth");
+const reviewRouter = require("./reviews");
 
 // Re-route into other resource router
 router.use("/:bootcampId/courses", courseRouter);
+router.use("/:bootcampId/reviews", reviewRouter);
 
 router
   .route("/")
