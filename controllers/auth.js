@@ -47,6 +47,21 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   SendCookieTokenResponse(user, 200, res, "User LoggedIn successfully");
 });
+
+// Description:  Get User
+// Route: GET /api/v1/auth/user
+// Access: Private
+exports.getUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
 // Description:  Forgot password
 // Route: POST /api/v1/auth/forgotpassword
 // Access: Public
@@ -91,18 +106,3 @@ const SendCookieTokenResponse = (user, statusCode, res, message) => {
     token,
   });
 };
-
-// Description:  Get User
-// Route: POST /api/v1/auth/user
-// Access: Private
-
-exports.getUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    return next(new ErrorResponse("User not found", 404));
-  }
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
-});
