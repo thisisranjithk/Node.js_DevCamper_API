@@ -5,6 +5,7 @@ const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
 
@@ -35,6 +36,9 @@ app.use(cookieParser());
 
 // Sanitize Data
 app.use(mongoSanitize());
+
+// Set security headers
+app.use(helmet());
 
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
