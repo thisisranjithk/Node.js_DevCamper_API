@@ -84,12 +84,14 @@ exports.addReview = asyncHandler(async (req, res, next) => {
 
 // Description: Update Review
 // Route: PUT /api/v1/reviews/:id
-// Access: Public
+// Access: Private
 exports.updateReview = asyncHandler(async (req, res, next) => {
   let review = await Review.findById(req.params.id);
 
   if (!review) {
-    return next(new ErrorResponse(`No Review Found`, 404));
+    return next(
+      new ErrorResponse(`No Review Found with this Id:${req.params.id}`, 404)
+    );
   }
 
   // Make sure review owner and admin only update
@@ -110,5 +112,35 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: review,
+  });
+});
+
+// Description: Delete Review
+// Route: DELETE /api/v1/reviews/:id
+// Access: Private
+exports.deleteReview = asyncHandler(async (req, res, next) => {
+  let review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(
+      new ErrorResponse(`No Review Found with this Id:${req.params.id}`, 404)
+    );
+  }
+
+  // Make sure review owner and admin only update
+  if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        "Unauthorized to delete review, only review Owner or Admin can Delete",
+        400
+      )
+    );
+  }
+
+  review = await Review.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    success: true,
+    message: "Review deleted successfully",
   });
 });
