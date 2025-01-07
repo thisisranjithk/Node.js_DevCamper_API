@@ -38,3 +38,74 @@ exports.getReview = asyncHandler(async (req, res, next) => {
     data: review,
   });
 });
+
+// Description: Add a Reviews
+// Route: POST /api/v1/bootcamps/:bootcampId/reviews
+// Access: Private
+exports.addReview = asyncHandler(async (req, res, next) => {
+  req.body.bootcamp = req.params.bootcampId;
+
+  const bootcamp = await BootCamp.findById(req.params.bootcampId);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(
+        `Bootcamp is not found with given Id:${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  // Add user id to review
+  req.body.user = req.user.id;
+
+  // Add a review to the database
+  const review = await Review.create(req.body);
+  res.status(201).json({
+    success: true,
+    data: review,
+  });
+});
+
+// Description: Update Reviews
+// Route: POST /api/v1/reviews/:id
+// Access: Private
+exports.addReview = asyncHandler(async (req, res, next) => {
+  req.body.bootcamp = req.params.bootcampId;
+
+  const bootcamp = await BootCamp.findById(req.params.bootcampId);
+
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(
+        `Bootcamp is not found with given Id:${req.params.bootcampId}`,
+        404
+      )
+    );
+  }
+
+  // check user is already added review
+  const existingReview = await Review.findOne({
+    bootcamp: req.params.bootcampId,
+    user: req.user.id,
+  });
+
+  if (existingReview) {
+    return next(
+      new ErrorResponse(
+        `The user:${req.user.id} is already added review to this particular bootcamp:${req.params.bootcampId}`,
+        400
+      )
+    );
+  }
+
+  // Add user id to review
+  req.body.user = req.user.id;
+
+  // Add a review to the database
+  const review = await Review.create(req.body);
+  res.status(201).json({
+    success: true,
+    data: review,
+  });
+});

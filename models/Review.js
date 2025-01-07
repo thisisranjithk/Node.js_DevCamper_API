@@ -19,12 +19,12 @@ const ReviewSchema = new mongoose.Schema(
       required: [true, "Please add a rating between 1 to 10"],
     },
     bootcamp: {
-      type: mongoose.Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "BootCamp",
       required: true,
     },
     user: {
-      type: mongoose.Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -41,6 +41,9 @@ ReviewSchema.virtual("bootcamps", {
   foreignField: "bootcamp",
   justOne: false,
 });
+
+// Prevent user from submitting more then one review per bootcamp
+ReviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
 
 const Review = mongoose.model("Review", ReviewSchema);
 
