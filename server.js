@@ -9,6 +9,7 @@ const { xss } = require("express-xss-sanitizer");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
+const cors = require("cors");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
 
@@ -55,6 +56,10 @@ app.use(limiter);
 
 // protect against HTTP Parameter Pollution attacks
 app.use(hpp());
+
+// enable Cors
+app.use(cors());
+
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
