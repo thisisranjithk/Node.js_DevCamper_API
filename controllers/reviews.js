@@ -81,3 +81,34 @@ exports.addReview = asyncHandler(async (req, res, next) => {
     data: review,
   });
 });
+
+// Description: Update Review
+// Route: PUT /api/v1/reviews/:id
+// Access: Public
+exports.updateReview = asyncHandler(async (req, res, next) => {
+  let review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(new ErrorResponse(`No Review Found`, 404));
+  }
+
+  // Make sure review owner and admin only update
+  if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
+    return next(
+      new ErrorResponse(
+        "Unauthorized to edit review, only review Owner or Admin can edit",
+        400
+      )
+    );
+  }
+
+  review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: review,
+  });
+});

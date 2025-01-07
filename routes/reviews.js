@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true });
-const { getReviews, getReview, addReview } = require("../controllers/reviews");
+const {
+  getReviews,
+  getReview,
+  addReview,
+  updateReview,
+} = require("../controllers/reviews");
 const Review = require("../models/Review");
 
 const advancedResults = require("../middleware/advancedResults");
@@ -17,6 +22,9 @@ router
   )
   .post(protect, authorize("user", "admin"), addReview);
 
-router.route("/:id").get(getReview);
+router
+  .route("/:id")
+  .get(getReview)
+  .put(protect, authorize("user", "admin"), updateReview);
 
 module.exports = router;
