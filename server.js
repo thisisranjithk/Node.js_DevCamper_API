@@ -5,6 +5,7 @@ const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const { xss } = require("express-xss-sanitizer");
 const helmet = require("helmet");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
@@ -39,6 +40,9 @@ app.use(mongoSanitize());
 
 // Set security headers
 app.use(helmet());
+
+// Prevent xss attacks
+app.use(xss());
 
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
