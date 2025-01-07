@@ -123,7 +123,7 @@ BootCampSchema.pre(
       );
     }
 
-    console.log(`Removing courses related to bootcamp id ${this._id}`);
+    // console.log(`Removing courses related to bootcamp id ${this._id}`);
 
     // Use `this.model` to access the Course model
     await this.model("Course").deleteMany({ bootcamp: this._id });

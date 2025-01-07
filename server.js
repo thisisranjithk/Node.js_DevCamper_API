@@ -7,6 +7,8 @@ const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const { xss } = require("express-xss-sanitizer");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
 
@@ -44,6 +46,15 @@ app.use(helmet());
 // Prevent xss attacks
 app.use(xss());
 
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  limit: 100,
+});
+app.use(limiter);
+
+// protect against HTTP Parameter Pollution attacks
+app.use(hpp());
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
