@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHander"); // error handler middleware
 
@@ -31,6 +32,9 @@ app.use(express.json());
 
 // Cookie parser
 app.use(cookieParser());
+
+// Sanitize Data
+app.use(mongoSanitize());
 
 // Mount routers
 app.use("/api/v1/bootcamps", bootcamps);
